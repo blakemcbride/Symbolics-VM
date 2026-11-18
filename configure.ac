@@ -7,7 +7,6 @@ AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS([config.h])
 # Checks for programs.
 AC_PROG_CC
-AC_PROG_CC_STDC
 AC_PROG_RANLIB
 #AC_PROG_CLISP
 AC_PROG_INSTALL
@@ -28,7 +27,7 @@ AC_CHECK_LIB([X11], [XKeysymToKeycode],[],
 AC_CHECK_LIB([xcb], [xcb_disconnect],[:])
 AC_CHECK_LIB([c], [fprintf],[],
 		    [AC_MSG_ERROR([you need libc to compile the vlm])])
-AC_CHECK_LIB([crypt], [encrypt],[],
+AC_CHECK_LIB([crypt], [crypt],[],
 		    [AC_MSG_ERROR([you need libcrypt to compile the vlm])])
 AC_CHECK_LIB([dl], [dlopen],[],
 		    [AC_MSG_ERROR([you need libdl to compile the vlm])])
@@ -109,6 +108,7 @@ else
     AX_CFLAGS_GCC_OPTION(-Ofast)
 fi
 
+AX_CFLAGS_GCC_OPTION(-std=gnu17)
 AX_CFLAGS_GCC_OPTION(-rdynamic)
 AX_CFLAGS_GCC_OPTION(-fno-strict-aliasing)
 AX_CFLAGS_GCC_OPTION(-march=native)
