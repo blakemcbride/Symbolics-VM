@@ -58,6 +58,41 @@ there are extensions for:
       You won't be able to use these extensions if you do not patch and
       recompile respective the LISP definitions as well.
 
-to install follow the instructions given in the file INSTALL.
+to build:
+
+     ./configure
+     make
+
+you need gcc, the X11 and xcb development files and libcrypt. clisp is
+only needed to regenerate stub/*.c. the generic instructions are in the
+file INSTALL.
+
+to run you also need three things that are not in this repository:
+
+     - a Genera world and the VLM debugger
+     Genera-8-5.vlod and VLM_debugger are Symbolics proprietary
+     software and cannot be distributed here; you have to take them
+     from your own Open Genera distribution. On the Open Genera 2.0 CD
+     they are in the VLMBASE200 subset:
+
+          zcat AXP/OSF/VLMBASE200 | tar xf - ./usr/opt/VLM200/lib/symbolics
+
+     - a configuration file
+     copy dot.VLM to .VLM in your home directory or in the directory
+     you start genera from, and set genera.world and genera.debugger to
+     where you put the two files above.
+
+     - a tap network device
+     genera exits at startup without one. sudo ./setup-tap.sh creates
+     tap0 with the addresses used in dot.VLM. The device is gone after
+     a reboot.
+
+then start it with src/genera. genera does not exit on SIGTERM; it asks
+for confirmation on its terminal instead.
+
+for a complete system Genera also expects to reach the sys.sct tree
+from the distribution on the host over NFS, to find itself and the host
+in /etc/hosts, and to get the time from the host's time/daytime
+services. it boots without these.
 
 ./configure --help will give you some configuration options

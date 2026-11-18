@@ -1,23 +1,26 @@
-# more .VLM
-genera.network: 192.245.4.23;mask=255.255.255.0
+# Sample VLM configuration.
+# Copy this file to .VLM in your home directory or in the directory you
+# start genera from, then adjust the paths and addresses.
+
+# Network: <tap device>:INTERNET|<Genera address>;mask=...;gateway=<host address>
+# The tap device must exist before genera starts (see setup-tap.sh).
+genera.network: tap0:INTERNET|10.0.0.2;mask=255.255.255.0;gateway=10.0.0.1
+
+# Size of Genera's virtual memory, in megabytes.
 genera.virtualMemory: 2048
 
-#genera.enableIDS: yes
-#genera.world: /home/brad/genera_8_3.ilod
-#genera.world: /usr/lib/symbolics/G5a.vlod
-#genera.world: /usr/lib/symbolics/G5.vlod
-#genera.world: /usr/lib/symbolics/MIT.vlod
-#genera.world: ../cvlm/CL-HTTP-A-CSAIL-8-5.vlod.bak
-#genera.world: ../symbolics/Genera-8-5.vlod
-genera.world: ../symbolics/MIT.vlod
-#genera.world: /tmp/world.vlod
-
+# World and debugger images from your own Open Genera distribution.
+# They are Symbolics proprietary software and are not part of this repository.
+genera.world: ../symbolics/Genera-8-5.vlod
 genera.debugger: ../symbolics/VLM_debugger
+
 genera.coldLoad.geometry: 800x600
- 
+
+#genera.enableIDS: yes
+
 #minima.network: og5-vlm1.ai.mit.edu;mask=255.255.255.0;gateway=128.52.39.10
 #minima.diagnosticHost: rainier-vlm.ai.mit.edu
 #minima.spy: yes
- 
+
 #iverify.diagnosticHost: rainier-vlm.ai.mit.edu
 #iverify.spy: yes
