@@ -6,3 +6,6 @@ clean-local:	clean-local-check
 .PHONY:	clean-local-check
 clean-local-check:
 	rm -f *~ .*~
+
+distclean-local:
+	rm -rf autom4te.cache
