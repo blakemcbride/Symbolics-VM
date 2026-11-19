@@ -1,0 +1,210 @@
+NETWORKING: how Genera talks to the Linux host
+
+The README says what to run. This file says what those pieces are, why
+they are needed, and what to check when something does not work.
+
+
+1. THE PICTURE
+
+Genera believes it is a computer of its own, attached to a network,
+with a second computer beside it that holds its files. Under this
+emulator both "computers" are your one Linux machine:
+
+      Genera (inside the genera process)        Linux host
+      address 10.0.0.2                           address 10.0.0.1
+             |                                        |
+             +---------------- tap0 ------------------+
+                    a private, software-only network
+
+      over that network Genera asks the host for
+          - the time            (once, at boot)
+          - files, by NFS       (sys.sct: sources, fonts, documentation)
+
+Genera calls itself DIS-LOCAL-HOST and the Linux machine DIS-EMB-HOST.
+Those names are built into the distribution world.
+
+The addresses above are the ones in dot.VLM and are the defaults of
+every script here. If you change them, change them everywhere: the
+genera.network line in .VLM, setup-tap.sh, and nfs2d.py --bind.
+
+
+2. THE TAP DEVICE
+
+tap0 is a virtual network card: Linux treats it as an Ethernet
+interface, but instead of hardware the other end is a program, here
+genera. Packets Genera sends appear on tap0; packets Linux sends to
+10.0.0.2 through tap0 are handed to Genera.
+
+The network line in .VLM ties the two ends together:
+
+     genera.network: tap0:INTERNET|10.0.0.2;mask=255.255.255.0;gateway=10.0.0.1
+
+     tap0         the device genera opens
+     10.0.0.2     Genera's own address
+     10.0.0.1     the host's address, which tap0 must carry
+
+Rules:
+
+     - The device must exist before genera starts. Without it genera
+       exits with "TUNSETIFF: Operation not permitted".
+     - It must be owned by the user who runs genera; setup-tap.sh sees
+       to that, so genera itself never needs root.
+     - Host and Genera must be on the same subnet.
+     - The device is not permanent. It is gone after a reboot.
+
+Create it with
+
+     sudo ./setup-tap.sh
+
+and look at it with
+
+     ip addr show tap0
+
+
+3. THE NFS SERVER
+
+Genera keeps almost nothing on a disk of its own. Its system sources,
+fonts and all of the on-line documentation live in the sys.sct
+directory tree, which it reads from the host with NFS.
+
+Genera speaks only NFS version 2, over UDP. Current Linux kernels no
+longer serve version 2 at all, so the ordinary NFS server (nfsd,
+/etc/exports) cannot be used. nfs2d.py is a small stand-alone server
+for exactly this job. It provides, on the host address only:
+
+     UDP/TCP 111     portmapper    (how Genera finds the other two)
+     UDP/TCP 2049    mount and NFS version 2
+     UDP/TCP 37      the time protocol (section 4)
+
+It is meant for Genera on the tap device and nothing else. It does no
+authentication, so do not bind it to an address other machines can
+reach.
+
+What it serves. --root names a directory that Genera sees as "/". The
+distribution world looks for /cdrom/sys.sct, so the directory must
+contain a "cdrom" entry (a symbolic link is fine) leading to the
+directory that holds sys.sct:
+
+     /srv/genera/cdrom  ->  /path/to/opengenera-cd
+     /path/to/opengenera-cd/sys.sct/...
+
+Starting it by hand:
+
+     sudo ./nfs2d.py --root /srv/genera
+
+Root is needed only to open ports below 1024; the server then switches
+to your own user and reads files as you. Add -v to log every request.
+
+Read-only or writable. By default Genera cannot change anything. With
+--rw it can create, write and delete files below --root, as your user.
+You need that only if you want to save your own files from Genera onto
+the host. Serve a separate directory for that purpose rather than
+making your sys.sct copy writable.
+
+Restarting nfs2d.py while Genera is running invalidates the file
+handles Genera holds. Restart Genera as well.
+
+Telling Genera where the files are. These two forms, typed at the
+"Command:" prompt, have to be given after every boot of the
+distribution world:
+
+     (si:login-to-sys-host)
+     (fs:set-logical-pathname-host "SYS"
+       :translations '(("**;*.*" "dis-emb-host:/cdrom/sys.sct/**/*.*")))
+
+The lasting cure is to define a site and save a world of your own; see
+docs/Open_Genera_Installation_Guide.pdf and docs/Site_Operations.pdf.
+
+
+4. THE TIME
+
+At boot Genera broadcasts a request for the time on its network (UDP
+port 37, the "time protocol" of RFC 868). nfs2d.py answers it.
+
+If nothing answers, Genera asks you to type the date and time in the
+cold load window. Do not answer: the emulator cannot set a hardware
+clock, so Genera then stops with "Unable to set calendar clock" and
+its network stays down. Fix the cause and start genera again.
+
+Genera assumes the US Eastern time zone until a site is defined, so
+its clock may be off by whole hours from yours.
+
+
+5. FIREWALLS
+
+Traffic from Genera arrives at the host on tap0 like traffic from any
+other machine, and a host firewall that drops incoming traffic drops
+it too. Pings usually still get through, which makes this easy to
+overlook. Allow the Genera subnet on the tap device only. With ufw:
+
+     sudo ufw allow in on tap0 from 10.0.0.0/24
+
+With firewalld, put tap0 in the trusted zone:
+
+     sudo firewall-cmd --permanent --zone=trusted --add-interface=tap0
+     sudo firewall-cmd --reload
+
+Unlike the tap device, a firewall rule survives a reboot.
+
+
+6. WHAT RESETS, AND WHEN
+
+     after a reboot of the host      tap0 is gone
+                                     nfs2d.py is not running
+     after every start of genera     the two forms of section 3
+
+./run-genera.sh takes care of the first two when it finds them
+missing. The forms must be typed by hand.
+
+
+7. LIMITS
+
+     - Genera can reach the host and nothing else. It has no route to
+       your real network or to the Internet. That would need IP
+       forwarding and address translation on the host, and a matching
+       site definition in Genera; neither is set up here.
+     - The distribution world offers no network services of its own
+       ("Servers are currently disabled"), so you cannot log in to
+       Genera from the host.
+     - nfs2d.py implements NFS version 2 only, which limits files to
+       2 gigabytes. No version 3 or 4 client can use it.
+
+
+8. WHEN IT DOES NOT WORK
+
+Check in this order; each step depends on the one before.
+
+  genera exits at once with "TUNSETIFF: Operation not permitted"
+       The tap device is missing or belongs to another user.
+       sudo ./setup-tap.sh
+
+  Is Genera on the network?
+       ping 10.0.0.2
+       It answers from about ten seconds after genera starts. If not,
+       compare the addresses in .VLM with "ip addr show tap0".
+
+  Is the server running and listening?
+       ss -lun | grep 10.0.0.1
+       should list ports 37, 111 and 2049. If it was started by
+       run-genera.sh:  systemctl status genera-nfs2d
+
+  Did Genera's requests arrive?
+       journalctl -u genera-nfs2d -o cat | grep 10.0.0.2
+       A "TIME" line appears at every boot of Genera and an "MNT" line
+       when it first reaches for a file. Ping works but neither line
+       appears: a firewall is dropping the traffic (section 5). To see
+       the packets themselves:  sudo tcpdump -ni tap0
+
+  Genera asks for the date and time
+       Its time request was not answered. Server not running, or a
+       firewall. See section 4; restart genera after fixing it.
+
+  The Document Examiner lists the books but shows no text, or Genera
+  reports that a file or host cannot be found
+       The two forms of section 3 were not typed in this session, or
+       --root has no cdrom/sys.sct below it. Check from the host:
+       ls /srv/genera/cdrom/sys.sct
+
+  "Error: VALUE-ERROR ... [SetModifierMapping]" in the cold load window
+       An old genera binary. The fix is in life-support/console.c;
+       rebuild.

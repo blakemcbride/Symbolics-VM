@@ -118,6 +118,15 @@ besides those files you need two things you create yourself:
 then start it with src/genera. genera does not exit on SIGTERM; it asks
 for confirmation on its terminal instead.
 
+./run-genera.sh does all of this in one step: it creates the tap device
+and starts nfs2d.py (see below) if they are not already there, asking
+for sudo only when it has to, and then starts genera. Set NFSROOT in a
+run-genera.conf file beside it if your export directory is not
+/srv/genera.
+
+the file NETWORKING explains what the tap device and the NFS server
+are, how they fit together, and what to check when they do not work.
+
 READING THE ON-LINE DOCUMENTATION
 
 Genera reads sys.sct from the host over NFS version 2, which current
