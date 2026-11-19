@@ -11,6 +11,7 @@
 # run-genera.conf next to this script; dot.run-genera.conf is a sample:
 #
 #   NFSROOT   directory nfs2d.py exports     (default /srv/genera)
+#   NFSRW     yes lets Genera write there    (default no, read-only)
 #   TAPDEV    tap device                     (default tap0)
 #   HOSTADDR  host's address on that device  (default 10.0.0.1)
 #   PREFIX    its prefix length              (default 24)
@@ -24,6 +25,8 @@ NFSROOT=${NFSROOT:-/srv/genera}
 TAPDEV=${TAPDEV:-tap0}
 HOSTADDR=${HOSTADDR:-10.0.0.1}
 PREFIX=${PREFIX:-24}
+RW=
+[ "${NFSRW:-no}" = yes ] && RW=--rw
 UNIT=genera-nfs2d
 
 if [ ! -x src/genera ]; then
@@ -47,7 +50,7 @@ if ! ss -Hlun 2>/dev/null | grep -qF "$HOSTADDR:2049 "; then
         sudo systemctl reset-failed "$UNIT" 2>/dev/null || true
         sudo systemd-run --quiet --unit="$UNIT" -p MemoryMax=1G \
             /usr/bin/env python3 "$HERE/nfs2d.py" --root "$NFSROOT" \
-            --bind "$HOSTADDR" --user "$(id -un)"
+            --bind "$HOSTADDR" --user "$(id -un)" $RW
         for i in 1 2 3 4 5 6 7 8 9 10; do
             ss -Hlun 2>/dev/null | grep -qF "$HOSTADDR:2049 " && break
             sleep 0.3

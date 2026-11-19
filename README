@@ -125,6 +125,10 @@ for sudo only when it has to, and then starts genera. its settings
 run-genera.conf; copy dot.run-genera.conf to that name and adjust it
 if the defaults do not suit you.
 
+Genera at first says that the world "has not been configured for use
+at the local site". that is normal; Setup.md gives the steps to define
+a site and save a configured world of your own.
+
 the file NETWORKING explains what the tap device and the NFS server
 are, how they fit together, and what to check when they do not work.
 
