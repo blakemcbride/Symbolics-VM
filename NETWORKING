@@ -41,7 +41,12 @@ The network line in .VLM ties the two ends together:
 
      tap0         the device genera opens
      10.0.0.2     Genera's own address
-     10.0.0.1     the host's address, which tap0 must carry
+     10.0.0.1     the gateway Genera is told to use
+
+The host's own address is not taken from that line. genera assumes the
+host is number 1 on Genera's network (10.0.0.1 for Genera at 10.0.0.2),
+and tap0 must carry that address. If yours differs, add
+";host=a.b.c.d" to the line. VLM.md describes the line in full.
 
 Rules:
 
@@ -49,7 +54,8 @@ Rules:
        exits with "TUNSETIFF: Operation not permitted".
      - It must be owned by the user who runs genera; setup-tap.sh sees
        to that, so genera itself never needs root.
-     - Host and Genera must be on the same subnet.
+     - Host and Genera must be on the same subnet, and the host must
+       be at the address genera expects (see above).
      - The device is not permanent. It is gone after a reboot.
 
 Create it with

@@ -9,6 +9,8 @@ User-facing documentation, read these before changing behaviour:
 - `README` — build, what is missing and where to get it, running
 - `NETWORKING` — tap device, NFS/time server, firewall, troubleshooting
 - `Setup.md` — defining a site and saving a configured world
+- `VLM.md` — every setting of the `.VLM` configuration file
+- `Memory.md` — memory limits, the 40-bit word, Lisp data layout
 - `docs/README` — reading order for the Symbolics manuals in `docs/`
 
 ## Layout

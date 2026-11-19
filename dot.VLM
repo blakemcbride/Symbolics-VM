@@ -14,7 +14,13 @@ genera.virtualMemory: 2048
 genera.world: ../symbolics/Genera-8-5.vlod
 genera.debugger: ../symbolics/VLM_debugger
 
-genera.coldLoad.geometry: 800x600
+# Size of the cold load window, in characters (columns x rows), not
+# pixels.  Without it the window is 800x800 pixels.
+#genera.coldLoad.geometry: 100x40
+
+# Size of Genera's main window, in pixels.  Without it Genera takes the
+# whole display.
+#genera.main.geometry: 1200x900
 
 #genera.enableIDS: yes
 

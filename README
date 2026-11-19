@@ -109,6 +109,9 @@ besides those files you need two things you create yourself:
      copy dot.VLM to .VLM in your home directory or in the directory
      you start genera from, and set genera.world and genera.debugger to
      where you put the two files above.
+     VLM.md describes every setting.
+     Memory.md explains memory sizes, words, and how Lisp data
+     is stored.
 
      - a tap network device
      genera exits at startup without one. sudo ./setup-tap.sh creates
