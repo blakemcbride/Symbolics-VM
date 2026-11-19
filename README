@@ -67,15 +67,43 @@ you need gcc, the X11 and xcb development files and libcrypt. clisp is
 only needed to regenerate stub/*.c. the generic instructions are in the
 file INSTALL.
 
-to run you also need three things that are not in this repository:
+WHAT IS MISSING FROM THIS REPOSITORY
 
-     - a Genera world and the VLM debugger
-     Genera-8-5.vlod and VLM_debugger are Symbolics proprietary
-     software and cannot be distributed here; you have to take them
-     from your own Open Genera distribution. On the Open Genera 2.0 CD
-     they are in the VLMBASE200 subset:
+this repository contains only the emulator. the emulator alone runs
+nothing: Genera itself, the Lisp system it executes, is Symbolics
+proprietary software and may not be distributed here. you have to
+supply these files yourself:
 
-          zcat AXP/OSF/VLMBASE200 | tar xf - ./usr/opt/VLM200/lib/symbolics
+     Genera-8-5.vlod    the Genera world (the Lisp system image)
+                        required to boot
+     VLM_debugger       the debugger image loaded at startup
+                        required to boot
+     sys.sct/           the Genera sources, fonts and on-line
+                        documentation; not required to boot, but
+                        without it the Document Examiner is empty
+
+all three come from the Symbolics Open Genera 2.0 distribution (a CD
+labelled OPEN_GENERA_2_0, 1998). how to find it:
+
+     - if you own Open Genera 2.0, use your CD or an image of it.
+
+     - Symbolics Technologies, the current rights holder, licenses
+     Genera, at the time of writing free of charge for non-commercial
+     use through its "Friends of Symbolics" program. see
+     https://www.symbolics.biz
+
+     - the manuals (not the software) are at
+     http://bitsavers.org/pdf/symbolics/software/genera_8/
+     start with the Open Genera Installation Guide and the Genera
+     Workbook. copies of the manuals are in docs; docs/README
+     says what to read in what order.
+
+on the Open Genera 2.0 CD the world and the debugger are inside the
+VLMBASE200 subset, and sys.sct is a directory at the top level:
+
+     zcat AXP/OSF/VLMBASE200 | tar xf - ./usr/opt/VLM200/lib/symbolics
+
+besides those files you need two things you create yourself:
 
      - a configuration file
      copy dot.VLM to .VLM in your home directory or in the directory
@@ -90,9 +118,40 @@ to run you also need three things that are not in this repository:
 then start it with src/genera. genera does not exit on SIGTERM; it asks
 for confirmation on its terminal instead.
 
-for a complete system Genera also expects to reach the sys.sct tree
-from the distribution on the host over NFS, to find itself and the host
-in /etc/hosts, and to get the time from the host's time/daytime
-services. it boots without these.
+READING THE ON-LINE DOCUMENTATION
+
+Genera reads sys.sct from the host over NFS version 2, which current
+Linux kernels no longer serve. nfs2d.py in this directory is a small
+user-space NFS version 2 server written for this purpose; it needs
+only python3, and neither rpcbind nor the kernel NFS server.
+
+the distribution world looks for the tree at /cdrom/sys.sct on the
+host, so build a directory that looks like that and serve it:
+
+     mkdir /srv/genera
+     ln -s /path/to/opengenera-cd /srv/genera/cdrom
+     sudo ./nfs2d.py --root /srv/genera
+
+(/path/to/opengenera-cd is the directory that contains sys.sct.) root
+is needed only for the portmapper port; the server then drops to your
+own user. it listens on 10.0.0.1, the host side of tap0, and is
+read-only unless you give --rw. start it after setup-tap.sh.
+
+then, in Genera, type at the "Command:" prompt
+
+     (si:login-to-sys-host)
+     (fs:set-logical-pathname-host "SYS"
+       :translations '(("**;*.*" "dis-emb-host:/cdrom/sys.sct/**/*.*")))
+
+and press SELECT D (F1, then D) for the Document Examiner.
+
+if the host runs a firewall, it has to let Genera's traffic in on the
+tap device, or the host sees nothing but pings. with ufw:
+
+     sudo ufw allow in on tap0 from 10.0.0.0/24
+
+nfs2d.py also answers the time protocol. Genera asks the host for the
+time at boot; if nothing answers it asks you, and then stops in the
+debugger with "Unable to set calendar clock".
 
 ./configure --help will give you some configuration options

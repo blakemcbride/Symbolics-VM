@@ -1,0 +1,127 @@
+Genera documentation: what to read, and in what order
+
+These are Symbolics manuals for Genera 8 and Open Genera 2.0, the
+system this emulator runs (Open Genera 2.0 is Genera 8.5 on a Virtual
+Lisp Machine). They come from
+http://bitsavers.org/pdf/symbolics/software/genera_8/ and remain
+copyright Symbolics.
+
+The manuals were written for Symbolics hardware and for Open Genera on
+a DEC Alpha under Digital Unix. Everything about Genera itself applies
+unchanged. Host-side instructions (installation, packet filter, Unix
+commands) do not; for those follow the README in the top directory.
+
+Once Genera can reach the sys.sct tree, all of this and much more is
+also on line in the Document Examiner (SELECT D).
+
+
+1. Getting it running
+
+   Read these before the first boot.
+
+   Open_Genera_User_s_Guide.pdf (29 pages)
+       What Open Genera is and how Genera and the host fit together.
+
+   Open_Genera_Installation_Guide.pdf (56 pages)
+       Read for the concepts: worlds, the distribution site, defining
+       your own site, how Genera reaches the host's files. The Digital
+       Unix commands themselves do not apply to Linux.
+
+   Open_Genera_Beta_II_Release_Notes.pdf (15 pages)
+       Short; skim for known limitations.
+
+
+2. Learning to use Genera
+
+   Read in this order. This is all a user who is not programming needs.
+
+   Genera_Concepts.pdf (26 pages)
+       The big picture. Read first; it is short and explains why
+       Genera does not behave like Unix.
+
+   Genera_Workbook.pdf (132 pages)
+       The hands-on tutorial. Work through it at the running system.
+
+   Genera_User_s_Guide.pdf (190 pages)
+       The full user's manual: the keyboard, the mouse, windows, the
+       command processor, files, getting help.
+
+   Genera_Handbook.pdf (188 pages)
+       Look-up companion to the User's Guide. Keep at hand; not for
+       reading straight through.
+
+   Genera_8.0_Reference_Cards.pdf (35 pages)
+       Key bindings and commands at a glance. Print it.
+
+   Editing_and_Mail.pdf (358 pages)
+       Zmacs, the editor, and Zmail. Read the Zmacs introduction once
+       you start editing files; the rest is reference.
+
+
+3. Programming
+
+   Program_Development_Tutorial.pdf (63 pages)
+       Read first. Builds the game of Life step by step and shows the
+       edit, compile, run and debug cycle.
+
+   Symbolics_Common_Lisp_Language_Concepts.pdf (443 pages)
+       The language. Start with its "Overview of Symbolics Common
+       Lisp", which is meant to be read in one sitting.
+
+   Symbolics_Common_Lisp_Programming_Constructs.pdf (387 pages)
+   Symbolics_Common_Lisp_Dictionary.pdf (803 pages)
+       Reference: the first by topic, the second alphabetical.
+
+   Program_Development_Utilities.pdf (420 pages)
+       Reference for the System Construction Tool, the compiler, the
+       debugger and related tools.
+
+   Getting_Ready_for_CLOS.pdf (25 pages)
+       Flavors compared with CLOS. Read if you know one of them.
+
+   Programming_the_User_Interface.pdf (517 pages)
+   User_Interface_Dictionary.pdf (481 pages)
+       Windows, presentations and commands for your own programs:
+       concepts in the first, alphabetical reference in the second.
+
+   CLIM_2.0_Release_Notes_and_Installation_Guide.pdf (9 pages)
+       Only if you intend to use CLIM.
+
+
+4. Administration and networking
+
+   Read when you move beyond the distribution site: defining a site,
+   saving your own world, talking to other hosts.
+
+   Site_Operations.pdf (440 pages)
+       Sites, namespaces, saving worlds, loading patches. The chapters
+       on setting up a site are the ones to read; much of the rest
+       concerns hardware this emulator does not have.
+
+   Symbolics_Network_File_System__NFS__User_s_Guide.pdf (23 pages)
+       How Genera reads the host's files. Relevant here, because NFS
+       is the only way Genera reaches sys.sct.
+
+   Symbolics_IPTCP_Software_Package.pdf (35 pages)
+   Networks.pdf (261 pages)
+       IP networking in Genera, then networking in general. Reference.
+
+   Symbolics_X_Window_System_User_s_Guide.pdf (21 pages)
+       Genera's X client and server. Optional.
+
+
+5. How it works inside
+
+   Internals.pdf (267 pages)
+       The scheduler, storage management and other internals. Not
+       needed to use the system.
+
+   ../documentation/64-bit-porting-guide.txt
+   ../documentation/vlm-installation.txt
+       Notes on the emulator itself, from its original authors. The
+       installation notes describe the 1990s Digital Unix setup and
+       are of historical interest only.
+
+
+The shortest useful path: Genera Concepts, then the Genera Workbook,
+then the Program Development Tutorial.

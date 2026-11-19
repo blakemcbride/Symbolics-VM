@@ -459,6 +459,56 @@ void AdvanceOpeningState (EmbConsoleChannel* pConsoleChannel)
 }
 
 
+/* Genera's X console asks the server to add every key it considers a shift
+   key to a modifier, without removing it from the modifier it is already on.
+   Current X servers reject a keycode that appears on two modifiers (BadValue),
+   which kills Genera's screen process.  The cold load window has already set
+   the modifiers up, so turn the request into one that leaves them unchanged. */
+
+static void FilterModifierMapping (EmbConsoleChannel* consoleChannel,
+				   unsigned char* data, ssize_t nBytes)
+{
+  char displayName[BUFSIZ];
+  Display* dpy;
+  XModifierKeymap* map;
+  ssize_t offset = 0;
+  size_t length;
+  int keysPerModifier, modifier, i;
+
+	while (offset + 4 <= nBytes)
+	  {
+		length = (data[offset+2] | (data[offset+3] << 8)) * 4;
+		if (length == 0 || offset + length > nBytes)
+			break;
+		keysPerModifier = data[offset+1];
+		if (data[offset] == X_SetModifierMapping && keysPerModifier > 0
+		    && length == 4 + 8 * keysPerModifier)
+		  {
+			BuildXDisplayName (displayName,
+					   consoleChannel->hostName,
+					   consoleChannel->displayNumber,
+					   consoleChannel->screenNumber);
+			dpy = XOpenDisplay (displayName);
+			if (dpy == NULL)
+				return;
+			map = XGetModifierMapping (dpy);
+			if (map != NULL)
+			  {
+				for (modifier = 0; modifier < 8; modifier++)
+					for (i = 0; i < keysPerModifier; i++)
+						data[offset + 4 + modifier * keysPerModifier + i] =
+						  (i < map->max_keypermod)
+						    ? map->modifiermap[modifier * map->max_keypermod + i]
+						    : 0;
+				XFreeModifiermap (map);
+			  }
+			XCloseDisplay (dpy);
+		  }
+		offset += length;
+	  }
+}
+
+
 /* Write data to the server */
 
 int ConsoleWrite (EmbConsoleChannel* pConsoleChannel, EmbConsoleBuffer* pCommand)
@@ -474,6 +524,8 @@ int ConsoleWrite (EmbConsoleChannel* pConsoleChannel, EmbConsoleBuffer* pCommand
 	data = (char*) MapVirtualAddressData (dataTransfer->address);
 	data += dataTransfer->offset;
 	nBytes = dataTransfer->nBytes;
+
+	FilterModifierMapping (consoleChannel, (unsigned char*) data, nBytes);
 
 	result = EWOULDBLOCK;
 	pollDisplay.fd = consoleChannel->fd;
