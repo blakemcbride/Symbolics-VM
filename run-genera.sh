@@ -39,7 +39,7 @@ script (see dot.run-genera.conf for a sample):
   HOSTADDR  host's address on that device    (default 10.0.0.1)
   PREFIX    its prefix length                (default 24)
 
-See README, NETWORKING and Setup.md.
+See README.md, NETWORKING and Setup.md.
 END
 }
 
@@ -61,7 +61,7 @@ RW=
 UNIT=genera-nfs2d
 
 if [ ! -x src/genera ]; then
-    echo "$0: src/genera not found; build it first (see README)" >&2
+    echo "$0: src/genera not found; build it first (see README.md)" >&2
     exit 1
 fi
 

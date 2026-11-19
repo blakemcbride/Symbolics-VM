@@ -9,7 +9,7 @@ copyright Symbolics.
 The manuals were written for Symbolics hardware and for Open Genera on
 a DEC Alpha under Digital Unix. Everything about Genera itself applies
 unchanged. Host-side instructions (installation, packet filter, Unix
-commands) do not; for those follow the README in the top directory.
+commands) do not; for those follow README.md in the top directory.
 
 Once Genera can reach the sys.sct tree, all of this and much more is
 also on line in the Document Examiner (SELECT D).

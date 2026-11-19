@@ -1,6 +1,6 @@
 NETWORKING: how Genera talks to the Linux host
 
-The README says what to run. This file says what those pieces are, why
+README.md says what to run. This file says what those pieces are, why
 they are needed, and what to check when something does not work.
 
 

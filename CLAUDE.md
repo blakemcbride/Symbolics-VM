@@ -1,12 +1,15 @@
-# linux-vlm
+# Symbolics-VM
 
 Emulator for the Symbolics Virtual Lisp Machine (VLM). It runs Open
 Genera 2.0 (Genera 8.5) on x86-64 Linux. The emulator is C; Genera
 itself is a proprietary world image that is **not** in this repository.
 
+The repository was formerly named `linux-vlm`, the name of the upstream
+project it is forked from.
+
 User-facing documentation, read these before changing behaviour:
 
-- `README` — build, what is missing and where to get it, running
+- `README.md` — build, what is missing and where to get it, running
 - `NETWORKING` — tap device, NFS/time server, firewall, troubleshooting
 - `Setup.md` — defining a site and saving a configured world
 - `VLM.md` — every setting of the `.VLM` configuration file
@@ -126,7 +129,7 @@ reference for its behaviour. Files carry version suffixes
 ## Conventions
 
 - Documentation is plain text or Markdown at the top level, short and
-  practical. Keep `README`, `NETWORKING` and `Setup.md` consistent when
+  practical. Keep `README.md`, `NETWORKING` and `Setup.md` consistent when
   behaviour changes.
 - Symbolics software (worlds, debugger, `sys.sct`) is proprietary and
   must never be committed. The manuals in `docs/` are an exception the

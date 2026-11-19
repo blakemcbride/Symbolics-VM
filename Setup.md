@@ -23,7 +23,7 @@ configured.
 > costs nothing: quit Genera and start again.
 
 Before starting, Genera must already boot and show documentation as
-described in `README` and `NETWORKING`.
+described in `README.md` and `NETWORKING`.
 
 ## Names used in this example
 
