@@ -16,6 +16,37 @@
 #   HOSTADDR  host's address on that device  (default 10.0.0.1)
 #   PREFIX    its prefix length              (default 24)
 
+usage() {
+    cat <<'END'
+Usage: run-genera.sh [-h | --help] [genera options]
+
+Start Genera, first bringing up what it needs if it is not already there:
+
+  - the tap network device        (setup-tap.sh)
+  - the NFS v2 and time server    (nfs2d.py)
+
+sudo is used only for those two steps, and only when they are needed.
+Any other arguments are passed on to genera, for example
+
+    run-genera.sh -world /path/to/My-World.vlod
+
+Settings come from the environment or from run-genera.conf beside this
+script (see dot.run-genera.conf for a sample):
+
+  NFSROOT   directory nfs2d.py exports       (default /srv/genera)
+  NFSRW     yes lets Genera write there      (default no)
+  TAPDEV    tap device                       (default tap0)
+  HOSTADDR  host's address on that device    (default 10.0.0.1)
+  PREFIX    its prefix length                (default 24)
+
+See README, NETWORKING and Setup.md.
+END
+}
+
+case "$1" in
+    -h|--help) usage; exit 0 ;;
+esac
+
 set -e
 cd "$(dirname "$0")"
 HERE=$(pwd)
