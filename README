@@ -120,9 +120,10 @@ for confirmation on its terminal instead.
 
 ./run-genera.sh does all of this in one step: it creates the tap device
 and starts nfs2d.py (see below) if they are not already there, asking
-for sudo only when it has to, and then starts genera. Set NFSROOT in a
-run-genera.conf file beside it if your export directory is not
-/srv/genera.
+for sudo only when it has to, and then starts genera. its settings
+(the NFS directory, the tap device and the host address) come from
+run-genera.conf; copy dot.run-genera.conf to that name and adjust it
+if the defaults do not suit you.
 
 the file NETWORKING explains what the tap device and the NFS server
 are, how they fit together, and what to check when they do not work.

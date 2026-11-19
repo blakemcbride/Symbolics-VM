@@ -8,7 +8,7 @@
 # Any arguments are passed on to genera.
 #
 # Settings may be overridden in the environment or in a file named
-# run-genera.conf next to this script (shell syntax, e.g. NFSROOT=/my/dir):
+# run-genera.conf next to this script; dot.run-genera.conf is a sample:
 #
 #   NFSROOT   directory nfs2d.py exports     (default /srv/genera)
 #   TAPDEV    tap device                     (default tap0)
